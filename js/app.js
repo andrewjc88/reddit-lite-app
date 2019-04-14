@@ -1,18 +1,49 @@
 
 'use strict'
 
+const feeds = [
+  {
+    name: 'Frontend',
+    url: 'frontend.json'
+  },
+  {
+    name: 'Workers rights',
+    url: 'workersrights.json'
+  },
+  {
+    name: 'Ethical Hacking',
+    url: 'ethicalhacking.json'
+  }
+]
+
 function init() {
-  createHeader();
-  getRedditStories();
+  createHeaderNav();
+  getRedditStories(feeds[0]);
   // setTimeout(refreshPage, 60000);
 };
 
-function createHeader() {
+function createHeaderNav() {
   const headerNode = document.createElement("div");
+  const navList = document.createElement("div");
   const headerTitle = document.createElement("h1");
+  
+  navList.className = "nav-list"
   headerNode.className = "header";
   headerTitle.innerHTML = "Reddit Lite";
+
+  feeds.forEach( feedItem => {
+    const navItem = document.createElement("div");
+    const navItemTitle = document.createElement("span");
+
+    navItemTitle.innerHTML = `${feedItem.name}`;
+    navItem.addEventListener("click", () => getRedditStories(feedItem), false)
+
+    navItem.appendChild(navItemTitle)
+    navList.appendChild(navItem)
+  })
+
   headerNode.appendChild(headerTitle);
+  headerNode.appendChild(navList);
   document.body.appendChild(headerNode)
 }
 
@@ -44,6 +75,8 @@ function populateFeed(feedItems) {
   const storiesSection = document.getElementById("stories-section");
   const scrollPosition = localStorage.scrollPosition;
 
+  storiesSection.innerHTML = "";
+
   if (storiesSection) {
     feedItems.forEach(feedItem => {
       storiesSection.appendChild(createStoryCard(feedItem.data))
@@ -55,9 +88,10 @@ function populateFeed(feedItems) {
   }
 }
 
-async function getRedditStories() {
+async function getRedditStories(feed) {
+  console.log(feed)
   try {
-    let response = await fetch(`https://www.reddit.com/r/cats.json`);
+    let response = await fetch(`https://www.reddit.com/r/${feed.url}`);
     let reponseObj = await response.json();
     let feedItems = reponseObj.data.children;
 

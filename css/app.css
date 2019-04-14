@@ -17,7 +17,7 @@ body {
   position: fixed;
   height: auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-content: center;
   width: 100%;
   background-color: rgb(255, 102, 0);
@@ -37,7 +37,7 @@ body {
   overflow: hidden;
   padding: 16px;
   border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.678);
+  background-color: rgba(255, 255, 255, 0.90);
 }
 
 .card-links-section {
@@ -54,4 +54,20 @@ body {
 
 .story-card-title-section a img {
   margin: 16px auto ;
+}
+
+.nav-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.nav-list div span {
+  margin: 0px 6px;
+  overflow: hidden;
+}
+
+.nav-list div span:hover{
+  font-weight: bold;
 }

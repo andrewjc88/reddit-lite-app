@@ -17,26 +17,38 @@ const feeds = [
 ]
 
 function init() {
+
   createHeaderNav();
-  getRedditStories(feeds[0]);
-  // setTimeout(refreshPage, 60000);
+  getRedditStories(getSelectedFeed());
+
+  setInterval(() => getRedditStories(getSelectedFeed()), 60000);
 };
+
+function getSelectedFeed() {
+  let selectedFeed = 0;
+
+  if (localStorage.selectedFeedIdx) {
+    selectedFeed = feeds[localStorage.selectedFeedIdx];
+  }
+
+  return selectedFeed;
+}
 
 function createHeaderNav() {
   const headerNode = document.createElement("div");
   const navList = document.createElement("div");
   const headerTitle = document.createElement("h1");
-  
+
   navList.className = "nav-list"
   headerNode.className = "header";
   headerTitle.innerHTML = "Reddit Lite";
 
-  feeds.forEach( feedItem => {
+  feeds.forEach(selectedFeed => {
     const navItem = document.createElement("div");
     const navItemTitle = document.createElement("span");
 
-    navItemTitle.innerHTML = `${feedItem.name}`;
-    navItem.addEventListener("click", () => getRedditStories(feedItem), false)
+    navItemTitle.innerHTML = `${selectedFeed.name}`;
+    navItem.addEventListener("click", () => changeSelectedFeed(selectedFeed), false)
 
     navItem.appendChild(navItemTitle)
     navList.appendChild(navItem)
@@ -44,11 +56,15 @@ function createHeaderNav() {
 
   headerNode.appendChild(headerTitle);
   headerNode.appendChild(navList);
-  document.body.appendChild(headerNode)
+  document.body.appendChild(headerNode);
 }
 
-function refreshPage() {
-  document.location.reload(true);
+function changeSelectedFeed(selectedFeed) {
+  const selectedFeedIdx = feeds.indexOf(selectedFeed);
+
+  getRedditStories(selectedFeed);
+  localStorage.setItem("selectedFeedIdx", selectedFeedIdx);
+  localStorage.setItem("scrollPosition", 0);
 }
 
 function createStoryCard(story) {
@@ -79,8 +95,8 @@ function populateFeed(feedItems) {
 
   if (storiesSection) {
     feedItems.forEach(feedItem => {
-      storiesSection.appendChild(createStoryCard(feedItem.data))
-    })
+      storiesSection.appendChild(createStoryCard(feedItem.data));
+    });
   }
 
   if (window.scrollY !== scrollPosition) {
@@ -89,16 +105,15 @@ function populateFeed(feedItems) {
 }
 
 async function getRedditStories(feed) {
-  console.log(feed)
   try {
     let response = await fetch(`https://www.reddit.com/r/${feed.url}`);
     let reponseObj = await response.json();
     let feedItems = reponseObj.data.children;
 
-    populateFeed(feedItems)
+    populateFeed(feedItems);
 
   } catch (err) {
-    alert('Failed to fetch reddit stories. ' + err)
+    alert('Failed to fetch reddit stories. ' + err);
   }
 }
 
@@ -108,8 +123,9 @@ function saveScrollPosition() {
 }
 
 window.addEventListener("unload", function () {
-  saveScrollPosition()
+  saveScrollPosition();
 });
+
 window.addEventListener("load", function () {
-  init()
+  init();
 });

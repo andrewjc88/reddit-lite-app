@@ -69,5 +69,11 @@ body {
 }
 
 .nav-list div span:hover{
-  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  /* font-weight: bold; */
+}
+
+.nav-list div span:active{
+  text-decoration: none;
 }
